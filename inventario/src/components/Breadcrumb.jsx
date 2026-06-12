@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 
 const labels = {
-  productos: 'Productos',
+  productos: 'Equipos',
   agregar: 'Agregar',
   editar: 'Editar',
 }
@@ -22,20 +22,25 @@ export default function Breadcrumb() {
 
   return (
     <nav className="breadcrumb" aria-label="Breadcrumb">
-      <ol>
-        {crumbs.map((crumb, i) => {
-          const isLast = i === crumbs.length - 1
-          return (
-            <li key={crumb.path}>
-              {isLast ? (
-                <span aria-current="page">{crumb.label}</span>
-              ) : (
-                <Link to={crumb.path}>{crumb.label}</Link>
-              )}
-            </li>
-          )
-        })}
-      </ol>
+      <div className="breadcrumb-content">
+        <ol>
+          {crumbs.map((crumb, i) => {
+            const isLast = i === crumbs.length - 1
+            return (
+              <li key={crumb.path}>
+                {isLast ? (
+                  <span aria-current="page">{crumb.label}</span>
+                ) : (
+                  <>
+                    <Link to={crumb.path}>{crumb.label}</Link>
+                    <span className="breadcrumb-separator">/</span>
+                  </>
+                )}
+              </li>
+            )
+          })}
+        </ol>
+      </div>
     </nav>
   )
 }
