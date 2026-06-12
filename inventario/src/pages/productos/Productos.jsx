@@ -4,6 +4,7 @@ import { getProductos, deleteProducto } from '../../services/productoService'
 
 export default function Productos() {
   const [productos, setProductos] = useState([])
+  const [filtroCategoria, setFiltroCategoria] = useState('Todos')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -15,8 +16,14 @@ export default function Productos() {
       .finally(() => setLoading(false))
   }, [])
 
+  const categorias = ['Todos', 'Estructura', 'Luces', 'Sonido', 'Herramientas', 'Mobiliario', 'Cables', 'Esquineros']
+
+  const productosFiltrados = filtroCategoria === 'Todos' 
+    ? productos 
+    : productos.filter(p => p.categoria === filtroCategoria)
+
   async function handleDelete(id) {
-    if (!confirm('¿Eliminar este producto?')) return
+    if (!confirm('¿Eliminar este equipo?')) return
     try {
       await deleteProducto(id)
       setProductos(prev => prev.filter(p => p.id !== id))
@@ -27,29 +34,36 @@ export default function Productos() {
 
   if (loading) {
     return (
-      <div className="page">
-        <div className="loading"><div className="spinner" /> Cargando productos...</div>
+      <div className="dashboard">
+        <div className="loading"><div className="spinner" /> Cargando equipos...</div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="page">
+      <div className="dashboard">
         <div className="error-msg">Error: {error}</div>
       </div>
     )
   }
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <h1>Productos</h1>
-        <p>Listado de productos tecnológicos registrados</p>
-      </div>
+    <div className="dashboard">
+      <header className="dashboard-hero">
+        <h1 className="hero-title">Inventario de Equipos</h1>
+        <p className="hero-subtitle">Listado de equipos para eventos de sonido</p>
+      </header>
 
-      <div className="actions">
-        <Link to="/productos/agregar" className="btn">+ Nuevo Producto</Link>
+      <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <Link to="/productos/agregar" className="btn">+ Nuevo Equipo</Link>
+        <select 
+          value={filtroCategoria} 
+          onChange={(e) => setFiltroCategoria(e.target.value)}
+          style={{ padding: '10px 16px', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-h)' }}
+        >
+          {categorias.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+        </select>
       </div>
 
       <div className="table-wrapper">
@@ -58,40 +72,44 @@ export default function Productos() {
             <tr>
               <th>Nombre</th>
               <th>Categoría</th>
-              <th>Precio</th>
               <th>Cantidad</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {productos.length === 0 ? (
+            {productosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan={6}>
+                <td colSpan={5} style={{ textAlign: 'center' }}>
                   <div className="empty-state">
-                    <div className="empty-icon">📭</div>
-                    <p>No hay productos registrados aún.</p>
+                    <p>No hay equipos registrados en esta categoría.</p>
                   </div>
                 </td>
               </tr>
             ) : (
-              productos.map(p => (
-                <tr key={p.id}>
-                  <td><strong>{p.nombre}</strong></td>
-                  <td>{p.categoria}</td>
-                  <td><strong>${Number(p.precio).toFixed(2)}</strong></td>
-                  <td>{p.cantidad}</td>
-                  <td>
-                    <span className={`estado-badge ${p.estado}`}>{p.estado}</span>
-                  </td>
-                  <td>
-                    <div className="actions-cell">
-                      <Link to={`/productos/editar/${p.id}`} className="link-btn edit">Editar</Link>
-                      <button className="link-btn delete" onClick={() => handleDelete(p.id)}>Eliminar</button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+              productosFiltrados.map(p => {
+                const estadoLabels = {
+                  'activo': 'Activo',
+                  'en-reparacion': 'En reparación',
+                  'dañado': 'Dañado'
+                }
+                return (
+                  <tr key={p.id}>
+                    <td><strong>{p.nombre}</strong></td>
+                    <td>{p.categoria}</td>
+                    <td>{p.cantidad}</td>
+                    <td>
+                      <span className={`estado-badge ${p.estado}`}>{estadoLabels[p.estado] || p.estado}</span>
+                    </td>
+                    <td>
+                      <div className="actions-cell">
+                        <Link to={`/productos/editar/${p.id}`} className="link-btn edit">Editar</Link>
+                        <button className="link-btn delete" onClick={() => handleDelete(p.id)}>Eliminar</button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })
             )}
           </tbody>
         </table>
