@@ -16,13 +16,12 @@ export default function Editar() {
         setForm({
           nombre: data.nombre,
           categoria: data.categoria,
-          precio: String(data.precio),
           cantidad: String(data.cantidad),
           estado: data.estado,
         })
       )
       .catch(err => {
-        alert('Error al cargar producto: ' + err.message)
+        alert('Error al cargar equipo: ' + err.message)
         navigate('/productos')
       })
       .finally(() => setLoading(false))
@@ -39,7 +38,6 @@ export default function Editar() {
       await updateProducto(id, {
         nombre: form.nombre,
         categoria: form.categoria,
-        precio: parseFloat(form.precio),
         cantidad: parseInt(form.cantidad, 10),
         estado: form.estado,
       })
@@ -53,8 +51,8 @@ export default function Editar() {
 
   if (loading) {
     return (
-      <div className="page">
-        <div className="loading"><div className="spinner" /> Cargando producto...</div>
+      <div className="dashboard">
+        <div className="loading"><div className="spinner" /> Cargando equipo...</div>
       </div>
     )
   }
@@ -62,11 +60,11 @@ export default function Editar() {
   if (!form) return null
 
   return (
-    <div className="page">
-      <div className="page-header">
-        <h1>Editar Producto</h1>
-        <p>Actualiza los datos del producto</p>
-      </div>
+    <div className="dashboard">
+      <header className="dashboard-hero">
+        <h1 className="hero-title">Editar Equipo</h1>
+        <p className="hero-subtitle">Actualiza los datos del equipo</p>
+      </header>
 
       <div className="form-wrapper">
         <form className="form" onSubmit={handleSubmit}>
@@ -79,35 +77,32 @@ export default function Editar() {
             <div className="form-group">
               <label>Categoría</label>
               <select name="categoria" value={form.categoria} onChange={handleChange} required>
-                <option value="Laptops">Laptops</option>
-                <option value="Monitores">Monitores</option>
-                <option value="Periféricos">Periféricos</option>
-                <option value="Almacenamiento">Almacenamiento</option>
-                <option value="Componentes">Componentes</option>
+                <option value="Estructura">Estructura</option>
+                <option value="Luces">Luces</option>
+                <option value="Sonido">Sonido</option>
+                <option value="Herramientas">Herramientas</option>
+                <option value="Mobiliario">Mobiliario</option>
+                <option value="Cables">Cables</option>
+                <option value="Esquineros">Esquineros</option>
               </select>
             </div>
             <div className="form-group">
               <label>Estado</label>
               <select name="estado" value={form.estado} onChange={handleChange}>
                 <option value="activo">Activo</option>
-                <option value="inactivo">Inactivo</option>
+                <option value="en-reparacion">En reparación</option>
+                <option value="dañado">Dañado</option>
               </select>
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Precio ($)</label>
-              <input type="number" name="precio" value={form.precio} onChange={handleChange} required step="0.01" min="0" />
-            </div>
-            <div className="form-group">
-              <label>Cantidad</label>
-              <input type="number" name="cantidad" value={form.cantidad} onChange={handleChange} required min="0" />
-            </div>
+          <div className="form-group">
+            <label>Cantidad</label>
+            <input type="number" name="cantidad" value={form.cantidad} onChange={handleChange} required min="0" />
           </div>
 
           <button type="submit" className="btn" disabled={saving}>
-            {saving ? 'Actualizando...' : 'Actualizar Producto'}
+            {saving ? 'Actualizando...' : 'Actualizar Equipo'}
           </button>
         </form>
       </div>
