@@ -70,7 +70,7 @@ export default function Editar() {
         <form className="form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Nombre</label>
-            <input name="nombre" value={form.nombre} onChange={handleChange} required />
+            <input name="nombre" value={form.nombre} onChange={handleChange} required maxLength={250} />
           </div>
 
           <div className="form-row">
